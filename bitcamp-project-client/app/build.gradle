@@ -1,0 +1,29 @@
+plugins {
+    id 'application'
+    id 'java'
+    id 'eclipse'
+}
+
+tasks.withType(JavaCompile){
+    options.encoding = 'UTF-8'
+}
+
+eclipse {
+    project {
+        name = "bitcamp-project-client"
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.guava:guava:29.0-jre'
+}
+
+application {
+    mainClass = 'com.eomcs.pms.ClientApp'
+}
