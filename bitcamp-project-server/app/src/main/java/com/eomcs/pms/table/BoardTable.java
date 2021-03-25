@@ -22,12 +22,13 @@ public class BoardTable implements DataTable {
   @Override
   public void service(Request request, Response response) throws Exception {
     Board board = null;
+    String[] fields = null;
 
     switch (request.getCommand()) {
       case "board/insert":
 
         // data에서 CSV 형식으로 표현된 문자열을 꺼낸다.
-        String[] fields = request.getData().get(0).split(",");
+        fields = request.getData().get(0).split(",");
 
         // CSV 데이터를 Board 객체에 저장한다.
         board = new Board();
@@ -46,6 +47,13 @@ public class BoardTable implements DataTable {
 
         // 새 게시글을 담은 Board 객체를 목록에 저장한다.
         list.add(board);
+
+        // 게시글을 목록에 추가하는 즉시 List 컬렉션의 전체 데이터를 파일에 저장한다.
+        // - 매번 전체 데이터를 파일에 저장하는 것은 비효율적이다.
+        // - 효율성에 대한 부분은 무시한다.
+        // - 현재 중요한 것은 서버 애플리케이션에서 데이터 파일을 관리한다는 점이다.
+        // - 어차피 이 애플리케이션은 진정한 성능을 제공하는 DBMS로 교체할 것이다.
+        JsonFileHandler.saveObjects(jsonFile, list);
         break;
       case "board/selectall":
         for (Board b : list) {
@@ -65,9 +73,32 @@ public class BoardTable implements DataTable {
         }
         break;
       case "board/update":
+        fields = request.getData().get(0).split(",");
+
+        board = getBoard(Integer.parseInt(fields[0]));
+        if (board == null) {
+          throw new Exception("해당 번호의 게시글이 없습니다.");
+        }
+
+        // 해당 게시물의 제목과 내용을 변경한다.
+        // - List 에 보관된 객체를 꺼낸 것이기 때문에 
+        //   그냥 그 객체의 값을 변경하면 된다.
+        board.setTitle(fields[1]);
+        board.setContent(fields[2]);
+
+        JsonFileHandler.saveObjects(jsonFile, list);
 
         break;
       case "board/delete":
+        no = Integer.parseInt(request.getData().get(0));
+        board = getBoard(no);
+        if (board == null) {
+          throw new Exception("해당 번호의 게시글이 없습니다.");
+        }
+
+        list.remove(board);
+
+        JsonFileHandler.saveObjects(jsonFile, list);
 
         break;
       default:
