@@ -12,7 +12,21 @@ import com.eomcs.pms.handler.BoardSearchHandler;
 import com.eomcs.pms.handler.BoardUpdateHandler;
 import com.eomcs.pms.handler.Command;
 import com.eomcs.pms.handler.MemberAddHandler;
+import com.eomcs.pms.handler.MemberDeleteHandler;
+import com.eomcs.pms.handler.MemberDetailHandler;
 import com.eomcs.pms.handler.MemberListHandler;
+import com.eomcs.pms.handler.MemberUpdateHandler;
+import com.eomcs.pms.handler.MemberValidatorHandler;
+import com.eomcs.pms.handler.ProjectAddHandler;
+import com.eomcs.pms.handler.ProjectDeleteHandler;
+import com.eomcs.pms.handler.ProjectDetailHandler;
+import com.eomcs.pms.handler.ProjectListHandler;
+import com.eomcs.pms.handler.ProjectUpdateHandler;
+import com.eomcs.pms.handler.TaskAddHandler;
+import com.eomcs.pms.handler.TaskDeleteHandler;
+import com.eomcs.pms.handler.TaskDetailHandler;
+import com.eomcs.pms.handler.TaskListHandler;
+import com.eomcs.pms.handler.TaskUpdateHandler;
 import com.eomcs.util.Prompt;
 
 public class ClientApp {
@@ -54,24 +68,24 @@ public class ClientApp {
 
     commandMap.put("/member/add", new MemberAddHandler());
     commandMap.put("/member/list", new MemberListHandler());
-    //    commandMap.put("/member/detail", new MemberDetailHandler(stmt));
-    //    commandMap.put("/member/update", new MemberUpdateHandler(stmt));
-    //    commandMap.put("/member/delete", new MemberDeleteHandler(stmt));
-    //    commandMap.put("/member/search", new MemberDeleteHandler(stmt));
+    commandMap.put("/member/detail", new MemberDetailHandler());
+    commandMap.put("/member/update", new MemberUpdateHandler());
+    commandMap.put("/member/delete", new MemberDeleteHandler());
 
-    // MemberValidatorHandler memberValidatorHandler = new MemberValidatorHandler(stmt);
 
-    //  commandMap.put("/project/add", new ProjectAddHandler(stmt, memberValidator));
-    //    commandMap.put("/project/list", new ProjectListHandler(stmt));
-    //    commandMap.put("/project/detail", new ProjectDetailHandler(stmt));
-    //    commandMap.put("/project/update", new ProjectUpdateHandler(stmt, memberValidator));
-    //    commandMap.put("/project/delete", new ProjectDeleteHandler(stmt));
-    //
-    //    commandMap.put("/task/add", new TaskAddHandler(stmt, memberValidator));
-    //    commandMap.put("/task/list", new TaskListHandler(stmt));
-    //    commandMap.put("/task/detail", new TaskDetailHandler(stmt));
-    //    commandMap.put("/task/update", new TaskUpdateHandler(stmt, memberValidator));
-    //    commandMap.put("/task/delete", new TaskDeleteHandler(stmt));
+    MemberValidatorHandler memberValidatorHandler = new MemberValidatorHandler();
+
+    commandMap.put("/project/add", new ProjectAddHandler(memberValidatorHandler));
+    commandMap.put("/project/list", new ProjectListHandler());
+    commandMap.put("/project/detail", new ProjectDetailHandler());
+    commandMap.put("/project/update", new ProjectUpdateHandler(memberValidatorHandler));
+    commandMap.put("/project/delete", new ProjectDeleteHandler());
+
+    commandMap.put("/task/add", new TaskAddHandler(memberValidatorHandler));
+    commandMap.put("/task/list", new TaskListHandler());
+    commandMap.put("/task/detail", new TaskDetailHandler());
+    commandMap.put("/task/update", new TaskUpdateHandler(memberValidatorHandler));
+    commandMap.put("/task/delete", new TaskDeleteHandler());
 
     // 서버와 연결한다
     try {

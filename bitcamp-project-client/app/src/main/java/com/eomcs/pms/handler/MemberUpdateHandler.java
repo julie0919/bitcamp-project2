@@ -46,7 +46,7 @@ public class MemberUpdateHandler implements Command {
       String input = Prompt.inputString("정말 변경하시겠습니까?(y/N) ");
 
       if (!input.equalsIgnoreCase("Y")) {
-        System.out.println("멤버 변경을 취소하였습니다.");
+        System.out.println("회원 변경을 취소하였습니다.");
         return;
       }
 
@@ -58,7 +58,7 @@ public class MemberUpdateHandler implements Command {
       stmt2.setInt(5, member.getNo());
       stmt2.executeUpdate();
 
-      System.out.println("멤버 정보를 변경하였습니다.");
+      System.out.println("회원 정보를 변경하였습니다.");
     }
   }
 }  

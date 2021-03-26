@@ -27,7 +27,7 @@ public class MemberDeleteHandler implements Command {
 
       stmt.setInt(1, no);
       if(stmt.executeUpdate() == 0) {
-        System.out.println("해당 번호의 멤버가 없습니다.");
+        System.out.println("해당 번호의 회원이 없습니다.");
       } else {
         System.out.println("회원을 삭제하였습니다.");
       }

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import com.eomcs.pms.domain.Task;
 import com.eomcs.util.Prompt;
 
 public class TaskDetailHandler implements Command {
@@ -17,7 +18,14 @@ public class TaskDetailHandler implements Command {
     try (Connection con = DriverManager.getConnection( //
         "jdbc:mysql://localhost:3306/studydb?user=study&password=1111");
         PreparedStatement stmt = con.prepareStatement( //
-            "select * from pms_task where no = ?")) {
+            "select "
+            + " t.no,"
+            + " t.deadline,"
+            + " m.no as owner_no,"
+            + " m.name as owner_name"
+            + " from pms_task t "
+            + " inner join pms_member m on t.owner=m.no "
+            + " where t.no = ?")) {
 
       stmt.setInt(1, no);
 
@@ -28,9 +36,9 @@ public class TaskDetailHandler implements Command {
         }
 
         System.out.printf("내용: %s\n", rs.getString("content"));
-        System.out.printf("마감일: %s\n", rs.getDate("deadline"), rs.getTime("deadline"));
-        System.out.printf("담당자: %s\n", rs.getString("owner"));
-        System.out.printf("상태: %s\n", rs.getInt("status"));
+        System.out.printf("마감일: %s\n", rs.getDate("deadline"));
+        System.out.printf("담당자: %s\n", rs.getString("owner_name"));
+        System.out.printf("상태: %s\n", Task.getStatusLabel(rs.getInt("status")));
       } 
     }
   }

@@ -3,12 +3,17 @@ package com.eomcs.pms.handler;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import com.eomcs.pms.domain.Task;
 import com.eomcs.util.Prompt;
 
 public class TaskAddHandler implements Command {
 
   MemberValidatorHandler memberValidatorHandler;
+
+  public TaskAddHandler(MemberValidatorHandler memberValidatorHandler) {
+    this.memberValidatorHandler = memberValidatorHandler;
+  }
 
   @Override
   public void service() throws Exception {
@@ -28,12 +33,18 @@ public class TaskAddHandler implements Command {
     try (Connection con = DriverManager.getConnection( //
         "jdbc:mysql://localhost:3306/studydb?user=study&password=1111");
         PreparedStatement stmt =
-            con.prepareStatement("insert into pms_task(content, deadline, owner, status) values(?,?,?,?)");) {
+            con.prepareStatement("insert into pms_task(content, deadline, owner, status) values(?,?,?,?)", 
+                Statement.RETURN_GENERATED_KEYS)) {
+
+      con.setAutoCommit(false);
+
 
       stmt.setString(1, t.getContent());
       stmt.setDate(2, t.getDeadline());
-      stmt.setString(3, t.getOwner());
+      stmt.setInt(3, t.getOwner().getNo());
       stmt.setInt(4, t.getStatus());
+
+      con.commit(); 
 
       stmt.executeUpdate();
       System.out.println("작업을 등록하였습니다.");
