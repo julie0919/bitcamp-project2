@@ -59,7 +59,9 @@ public class ClientApp {
     // 사용자 명령을 처리하는 객체를 맵에 보관한다.
     HashMap<String,Command> commandMap = new HashMap<>();
 
-    commandMap.put("/board/add", new BoardAddHandler());
+    MemberValidatorHandler memberValidatorHandler = new MemberValidatorHandler();
+
+    commandMap.put("/board/add", new BoardAddHandler(memberValidatorHandler));
     commandMap.put("/board/list", new BoardListHandler());
     commandMap.put("/board/detail", new BoardDetailHandler());
     commandMap.put("/board/update", new BoardUpdateHandler());
@@ -71,9 +73,6 @@ public class ClientApp {
     commandMap.put("/member/detail", new MemberDetailHandler());
     commandMap.put("/member/update", new MemberUpdateHandler());
     commandMap.put("/member/delete", new MemberDeleteHandler());
-
-
-    MemberValidatorHandler memberValidatorHandler = new MemberValidatorHandler();
 
     commandMap.put("/project/add", new ProjectAddHandler(memberValidatorHandler));
     commandMap.put("/project/list", new ProjectListHandler());
