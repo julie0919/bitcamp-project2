@@ -7,10 +7,13 @@ import com.eomcs.util.Prompt;
 
 public class BoardAddHandler implements Command {
 
-  MemberValidatorHandler memberValidatorHandler;
+  // 핸들러가 사용할 DAO: 의존 객체 (dependency)
+  BoardDao boardDao;
 
-  public BoardAddHandler(MemberValidatorHandler memberValidatorHandler) {
-    this.memberValidatorHandler = memberValidatorHandler;
+  // DAO 객체는 이 클래스가 작업하는데 필수 객체이기 때문에
+  // 생성자를 통해 반드시 주입 받도록 한다.
+  public BoardAddHandler(BoardDao boardDao) {
+    this.boardDao = boardDao;
   }
 
   @Override
@@ -26,7 +29,8 @@ public class BoardAddHandler implements Command {
     writer.setNo(Prompt.inputInt("작성자 번호? "));
     b.setWriter(writer);
 
-    BoardDao.insert(b);
+    boardDao.insert(b);
+
     System.out.println("게시글을 등록하였습니다.");
   }
 }

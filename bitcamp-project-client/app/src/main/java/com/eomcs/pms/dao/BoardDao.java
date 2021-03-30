@@ -12,20 +12,16 @@ import com.eomcs.pms.domain.Member;
 
 public class BoardDao {
 
-  static Connection con;
+  Connection con;
 
-  static {
-    try {
-      con = DriverManager.getConnection(
-          "jdbc:mysql://localhost:3306/studydb?user=study&password=1111");
-    } catch (Exception e) {
-      System.out.println("DB 커넥션 객체 생성 중 오류 발생!");
-    }
+  public BoardDao() throws Exception {
+    this.con = DriverManager.getConnection(
+        "jdbc:mysql://localhost:3306/studydb?user=study&password=1111");
   }
 
-  public static int insert(Board board) throws Exception {
-    try (PreparedStatement stmt =
-        con.prepareStatement("insert into pms_board(title, content, writer) values(?,?,?)");) {
+  public int insert(Board board) throws Exception {
+    try (PreparedStatement stmt = con.prepareStatement(
+        "insert into pms_board(title, content, writer) values(?,?,?)");) {
 
       stmt.setString(1, board.getTitle());
       stmt.setString(2, board.getContent());
@@ -35,8 +31,9 @@ public class BoardDao {
     }
   }
 
-  public static List<Board> findAll() throws Exception {
+  public List<Board> findAll() throws Exception {
     ArrayList<Board> list = new ArrayList<>();
+
     try (PreparedStatement stmt = con.prepareStatement(
         "select "
             + " b.no,"
@@ -69,8 +66,7 @@ public class BoardDao {
     return list;
   }
 
-  public static Board findByNo(int no) throws Exception {
-
+  public Board findByNo(int no) throws Exception {
     try (PreparedStatement stmt = con.prepareStatement(
         "select "
             + " b.no,"
@@ -110,7 +106,7 @@ public class BoardDao {
     }
   }
 
-  public static int update(Board board) throws Exception {
+  public int update(Board board) throws Exception {
     try (PreparedStatement stmt = con.prepareStatement(
         "update pms_board set title=?, content=? where no=?")) {
 
@@ -121,7 +117,7 @@ public class BoardDao {
     }
   }
 
-  public static int updateViewCount(int no) throws Exception {
+  public int updateViewCount(int no) throws Exception {
     try (PreparedStatement stmt = con.prepareStatement(
         "update pms_board set vw_cnt=vw_cnt+1 where no=?")) {
 
@@ -130,7 +126,7 @@ public class BoardDao {
     }
   }
 
-  public static int delete(int no) throws Exception {
+  public int delete(int no) throws Exception {
     try (PreparedStatement stmt = con.prepareStatement(
         "delete from pms_board where no=?")) {
 
@@ -139,7 +135,7 @@ public class BoardDao {
     }
   }
 
-  public static List<Board> findByKeyword(String keyword) throws Exception {
+  public List<Board> findByKeyword(String keyword) throws Exception {
     ArrayList<Board> list = new ArrayList<>();
 
     try (PreparedStatement stmt = con.prepareStatement(
