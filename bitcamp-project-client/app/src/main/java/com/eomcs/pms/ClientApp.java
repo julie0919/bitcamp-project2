@@ -63,7 +63,7 @@ public class ClientApp {
     // Handler가 사용할 DAO 객체 준비
     BoardDao boardDao = new BoardDao();
     MemberDao memberDao = new MemberDao();
-    ProjectDao proejctDao = new ProjectDao();
+    ProjectDao projectDao = new ProjectDao();
     TaskDao taskDao = new TaskDao();
 
     // 사용자 명령을 처리하는 객체를 맵에 보관한다.
@@ -84,16 +84,16 @@ public class ClientApp {
     commandMap.put("/member/delete", new MemberDeleteHandler(memberDao));
     MemberValidatorHandler memberValidatorHandler = new MemberValidatorHandler(memberDao);
 
-    commandMap.put("/project/add", new ProjectAddHandler(proejctDao, memberValidatorHandler));
-    commandMap.put("/project/list", new ProjectListHandler(proejctDao));
-    commandMap.put("/project/detail", new ProjectDetailHandler(proejctDao));
-    commandMap.put("/project/update", new ProjectUpdateHandler(proejctDao, memberValidatorHandler));
-    commandMap.put("/project/delete", new ProjectDeleteHandler(proejctDao));
+    commandMap.put("/project/add", new ProjectAddHandler(projectDao, memberValidatorHandler));
+    commandMap.put("/project/list", new ProjectListHandler(projectDao));
+    commandMap.put("/project/detail", new ProjectDetailHandler(projectDao));
+    commandMap.put("/project/update", new ProjectUpdateHandler(projectDao, memberValidatorHandler));
+    commandMap.put("/project/delete", new ProjectDeleteHandler(projectDao));
 
     commandMap.put("/task/add", new TaskAddHandler(taskDao, memberValidatorHandler));
     commandMap.put("/task/list", new TaskListHandler(taskDao));
     commandMap.put("/task/detail", new TaskDetailHandler(taskDao));
-    commandMap.put("/task/update", new TaskUpdateHandler(memberValidatorHandler));
+    commandMap.put("/task/update", new TaskUpdateHandler(taskDao, projectDao, memberValidatorHandler));
     commandMap.put("/task/delete", new TaskDeleteHandler(taskDao));
 
     // 서버와 연결한다

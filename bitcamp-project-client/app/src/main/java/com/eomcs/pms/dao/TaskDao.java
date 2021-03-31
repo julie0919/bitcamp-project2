@@ -118,44 +118,19 @@ public class TaskDao {
     }
   }
 
+  public int update(Task task) throws Exception {
+    try (PreparedStatement stmt = con.prepareStatement(
+        "update pms_task set content=?, deadline=?, owner=?, status=?, project_no=? where no=?")) {
 
-  //  public int update(Project project) throws Exception {
-  //    try (PreparedStatement stmt = con.prepareStatement(
-  //        "update pms_project set"
-  //            + " title=?,"
-  //            + " content=?,"
-  //            + " sdt=?,"
-  //            + " edt=?,"
-  //            + " owner=?"
-  //            + " where no=?")) {
-  //
-  //      con.setAutoCommit(false);
-  //
-  //      stmt.setString(1, project.getTitle());
-  //      stmt.setString(2, project.getContent());
-  //      stmt.setDate(3, project.getStartDate());
-  //      stmt.setDate(4, project.getEndDate());
-  //      stmt.setInt(5, project.getOwner().getNo());
-  //      stmt.setInt(6, project.getNo());
-  //
-  //      int count = stmt.executeUpdate();
-  //
-  //      // 기존 프로젝트의 모든 멤버를 삭제한다.
-  //      deleteMember(project.getNo());
-  //
-  //      // 프로젝트 멤버를 추가한다.
-  //      for (Member member : project.getMembers()) {
-  //        insertMember(project.getNo(), member.getNo());
-  //      }
-  //
-  //      con.commit(); // 의미: 트렌젝션 종료
-  //
-  //      return count;
-  //
-  //    } finally { // 트랜젝션 종료 후 auto commit 을 원래 상태로 설정
-  //      con.setAutoCommit(true);
-  //    }
-  //  }  
+      stmt.setString(1, task.getContent());
+      stmt.setDate(2, task.getDeadline());
+      stmt.setInt(3, task.getOwner().getNo());
+      stmt.setInt(4, task.getStatus());
+      stmt.setInt(5, task.getProjectNo());
+      stmt.setInt(6, task.getNo());
+      return stmt.executeUpdate();
+    }
+  }  
 
   public int delete(int no) throws Exception {
     try (PreparedStatement stmt = con.prepareStatement(

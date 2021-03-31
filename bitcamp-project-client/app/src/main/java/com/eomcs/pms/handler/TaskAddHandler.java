@@ -58,6 +58,7 @@ public class TaskAddHandler implements Command {
 
     // 4) 작업 정보를 입력받는다.
     Task t = new Task();
+    t.setProjectNo(selectedProjectNo);
     t.setContent(Prompt.inputString("내용? "));
     t.setDeadline(Prompt.inputDate("마감일? "));
     t.setStatus(Prompt.inputInt("상태?\n0: 신규\n1: 진행중\n2: 완료\n> "));
