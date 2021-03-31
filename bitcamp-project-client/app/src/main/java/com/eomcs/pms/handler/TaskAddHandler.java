@@ -1,7 +1,7 @@
 package com.eomcs.pms.handler;
 
-import java.util.ArrayList;
 import java.util.List;
+import com.eomcs.pms.dao.ProjectDao;
 import com.eomcs.pms.dao.TaskDao;
 import com.eomcs.pms.domain.Project;
 import com.eomcs.pms.domain.Task;
@@ -10,11 +10,13 @@ import com.eomcs.util.Prompt;
 public class TaskAddHandler implements Command {
 
   TaskDao taskDao;
-  MemberValidatorHandler memberValidatorHandler;
+  ProjectDao projectDao;
+  MemberValidator memberValidator;
 
-  public TaskAddHandler(TaskDao taskDao, MemberValidatorHandler memberValidatorHandler) {
+  public TaskAddHandler(TaskDao taskDao, ProjectDao projectDao, MemberValidator memberValidator) {
     this.taskDao = taskDao;
-    this.memberValidatorHandler = memberValidatorHandler;
+    this.projectDao = projectDao;
+    this.memberValidator = memberValidator;
   }
 
   @Override
@@ -22,22 +24,22 @@ public class TaskAddHandler implements Command {
     System.out.println("[작업 등록]");
 
     // 1) 현재 등록된 프로젝트 목록을 가져온다.
-    List<Project> projects = new ArrayList<>();
+    List<Project> projects = projectDao.findAll();
 
     // 2) 프로젝트 목록을 출력한다.
-    System.out.println("프로젝트들: ");
+    System.out.println("프로젝트들:");
     if (projects.size() == 0) {
       System.out.println("현재 등록된 프로젝트가 없습니다!");
       return;
     }
     for (Project p : projects) {
-      System.out.printf("  %d. %s\n", p.getNo(), p.getTitle());
+      System.out.printf("  %d, %s\n", p.getNo(), p.getTitle());
     }
 
     // 3) 작업을 등록할 프로젝트를 선택한다.
     int selectedProjectNo = 0;
     loop: while (true) {
-      String input = Prompt.inputString("프로젝트 번호? (취소: 빈 문자열) ");
+      String input = Prompt.inputString("프로젝트 번호?(취소: 빈 문자열) ");
       if (input.length() == 0) {
         System.out.println("작업 등록을 취소합니다.");
         return;
@@ -53,17 +55,16 @@ public class TaskAddHandler implements Command {
           break loop;
         }
       }
-      System.out.println("유효하지 않은 프로젝트 번호입니다.");
+      System.out.println("유효하지 않은 프로젝트 번호 입니다.");
     }
 
-    // 4) 작업 정보를 입력받는다.
+    // 4) 작업 정보를 입력 받는다.
     Task t = new Task();
-    t.setProjectNo(selectedProjectNo);
     t.setContent(Prompt.inputString("내용? "));
     t.setDeadline(Prompt.inputDate("마감일? "));
     t.setStatus(Prompt.inputInt("상태?\n0: 신규\n1: 진행중\n2: 완료\n> "));
 
-    t.setOwner(memberValidatorHandler.inputMember("담당자?(취소: 빈 문자열) "));
+    t.setOwner(memberValidator.inputMember("담당자?(취소: 빈 문자열) "));
     if (t.getOwner() == null) {
       System.out.println("작업 등록을 취소하였습니다.");
       return;
@@ -71,6 +72,6 @@ public class TaskAddHandler implements Command {
 
     taskDao.insert(t);
 
-    System.out.println("작업을 등록하였습니다.");
+    System.out.println("작업을 등록했습니다.");
   }
 }

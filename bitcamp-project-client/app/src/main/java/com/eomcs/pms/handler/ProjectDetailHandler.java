@@ -9,7 +9,7 @@ import com.eomcs.util.Prompt;
 public class ProjectDetailHandler implements Command {
 
   ProjectDao projectDao;
-  MemberValidatorHandler memberValidatorHandler;
+  MemberValidator memberValidatorHandler;
 
   public ProjectDetailHandler(ProjectDao projectDao) {
     this.projectDao = projectDao;

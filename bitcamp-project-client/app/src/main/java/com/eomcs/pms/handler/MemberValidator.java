@@ -6,11 +6,11 @@ import com.eomcs.pms.dao.MemberDao;
 import com.eomcs.pms.domain.Member;
 import com.eomcs.util.Prompt;
 
-public class MemberValidatorHandler {
+public class MemberValidator {
 
   MemberDao memberDao;
 
-  public MemberValidatorHandler (MemberDao memberDao) {
+  public MemberValidator (MemberDao memberDao) {
     this.memberDao = memberDao;
   }
 

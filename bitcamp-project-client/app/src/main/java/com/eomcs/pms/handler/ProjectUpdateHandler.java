@@ -9,9 +9,9 @@ import com.eomcs.util.Prompt;
 public class ProjectUpdateHandler implements Command {
 
   ProjectDao projectDao;
-  MemberValidatorHandler memberValidatorHandler;
+  MemberValidator memberValidatorHandler;
 
-  public ProjectUpdateHandler(ProjectDao projectDao, MemberValidatorHandler memberValidatorHandler) {
+  public ProjectUpdateHandler(ProjectDao projectDao, MemberValidator memberValidatorHandler) {
     this.projectDao = projectDao;
     this.memberValidatorHandler = memberValidatorHandler;
   }

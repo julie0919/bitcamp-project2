@@ -8,7 +8,7 @@ import com.eomcs.pms.domain.Project;
 public class ProjectListHandler implements Command {
 
   ProjectDao projectDao;
-  MemberValidatorHandler memberValidatorHandler;
+  MemberValidator memberValidatorHandler;
 
   public ProjectListHandler(ProjectDao projectDao) {
     this.projectDao = projectDao;

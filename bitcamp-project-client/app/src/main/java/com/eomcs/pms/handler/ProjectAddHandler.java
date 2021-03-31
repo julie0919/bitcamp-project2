@@ -7,9 +7,9 @@ import com.eomcs.util.Prompt;
 public class ProjectAddHandler implements Command {
 
   ProjectDao projectDao;
-  MemberValidatorHandler memberValidatorHandler;
+  MemberValidator memberValidatorHandler;
 
-  public ProjectAddHandler(ProjectDao projectDao, MemberValidatorHandler memberValidatorHandler) {
+  public ProjectAddHandler(ProjectDao projectDao, MemberValidator memberValidatorHandler) {
     this.projectDao = projectDao;
     this.memberValidatorHandler = memberValidatorHandler;
   }
