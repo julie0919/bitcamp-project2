@@ -1,11 +1,14 @@
 package com.eomcs.pms;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import com.eomcs.pms.dao.BoardDao;
 import com.eomcs.pms.dao.MemberDao;
 import com.eomcs.pms.dao.ProjectDao;
@@ -30,13 +33,21 @@ import com.eomcs.pms.handler.MemberValidator;
 import com.eomcs.pms.handler.ProjectAddHandler;
 import com.eomcs.pms.handler.ProjectDeleteHandler;
 import com.eomcs.pms.handler.ProjectDetailHandler;
+import com.eomcs.pms.handler.ProjectDetailSearchHandler;
 import com.eomcs.pms.handler.ProjectListHandler;
+import com.eomcs.pms.handler.ProjectMemberDeleteHandler;
+import com.eomcs.pms.handler.ProjectMemberUpdateHandler;
+import com.eomcs.pms.handler.ProjectSearchHandler;
 import com.eomcs.pms.handler.ProjectUpdateHandler;
 import com.eomcs.pms.handler.TaskAddHandler;
 import com.eomcs.pms.handler.TaskDeleteHandler;
 import com.eomcs.pms.handler.TaskDetailHandler;
 import com.eomcs.pms.handler.TaskListHandler;
 import com.eomcs.pms.handler.TaskUpdateHandler;
+import com.eomcs.pms.service.BoardService;
+import com.eomcs.pms.service.MemberService;
+import com.eomcs.pms.service.ProjectService;
+import com.eomcs.pms.service.TaskService;
 import com.eomcs.util.Prompt;
 
 public class ClientApp {
@@ -53,6 +64,7 @@ public class ClientApp {
 
     try {
       app.execute();
+
     } catch (Exception e) {
       System.out.println("클라이언트 실행 중 오류 발생!");
       e.printStackTrace();
@@ -61,50 +73,65 @@ public class ClientApp {
 
   public ClientApp(String serverAddress, int port) {
     this.serverAddress = serverAddress;
-    this.port = port;
+    this.port = port; 
   }
 
   public void execute() throws Exception {
 
-    // DB Connection 객체 생성
-    Connection con = DriverManager.getConnection(
-        "jdbc:mysql://localhost:3306/studydb?user=study&password=1111");
+    // Mybatis 설정 파일을 읽을 입력 스트림 객체 준비
+    InputStream mybatisConfigStream = Resources.getResourceAsStream(
+        "com/eomcs/pms/conf/mybatis-config.xml");
+
+    // SqlSessionFactory 객체 준비
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(mybatisConfigStream);
+
+    // DAO 가 사용할 SqlSession 객체 준비
+    // => 단 auto commit 으로 동작하는 SqlSession 객체를 준비한다.
+    SqlSession sqlSession = sqlSessionFactory.openSession(false);
 
     // Handler가 사용할 DAO 객체 준비
-    BoardDao boardDao = new BoardDaoImpl(con);
-    MemberDao memberDao = new MemberDaoImpl(con);
-    ProjectDao projectDao = new ProjectDaoImpl(con);
-    TaskDao taskDao = new TaskDaoImpl(con);
+    BoardDao boardDao = new BoardDaoImpl(sqlSession);
+    MemberDao memberDao = new MemberDaoImpl(sqlSession);
+    ProjectDao projectDao = new ProjectDaoImpl(sqlSession);
+    TaskDao taskDao = new TaskDaoImpl(sqlSession);
+
+    BoardService boardService = new BoardService(sqlSession, boardDao);
+    MemberService memberService = new MemberService(sqlSession, memberDao);
+    ProjectService projectService = new ProjectService(sqlSession, projectDao, taskDao);
+    TaskService taskService = new TaskService(sqlSession, taskDao);
 
     // 사용자 명령을 처리하는 객체를 맵에 보관한다.
     HashMap<String,Command> commandMap = new HashMap<>();
 
+    commandMap.put("/board/add", new BoardAddHandler(boardService));
+    commandMap.put("/board/list", new BoardListHandler(boardService));
+    commandMap.put("/board/detail", new BoardDetailHandler(boardService));
+    commandMap.put("/board/update", new BoardUpdateHandler(boardService));
+    commandMap.put("/board/delete", new BoardDeleteHandler(boardService));
+    commandMap.put("/board/search", new BoardSearchHandler(boardService));
 
-    commandMap.put("/board/add", new BoardAddHandler(boardDao));
-    commandMap.put("/board/list", new BoardListHandler(boardDao));
-    commandMap.put("/board/detail", new BoardDetailHandler(boardDao));
-    commandMap.put("/board/update", new BoardUpdateHandler(boardDao));
-    commandMap.put("/board/delete", new BoardDeleteHandler(boardDao));
-    commandMap.put("/board/search", new BoardSearchHandler(boardDao));
+    commandMap.put("/member/add", new MemberAddHandler(memberService));
+    commandMap.put("/member/list", new MemberListHandler(memberService));
+    commandMap.put("/member/detail", new MemberDetailHandler(memberService));
+    commandMap.put("/member/update", new MemberUpdateHandler(memberService));
+    commandMap.put("/member/delete", new MemberDeleteHandler(memberService));
+    MemberValidator memberValidator = new MemberValidator(memberService);
 
-    commandMap.put("/member/add", new MemberAddHandler(memberDao));
-    commandMap.put("/member/list", new MemberListHandler(memberDao));
-    commandMap.put("/member/detail", new MemberDetailHandler(memberDao));
-    commandMap.put("/member/update", new MemberUpdateHandler(memberDao));
-    commandMap.put("/member/delete", new MemberDeleteHandler(memberDao));
-    MemberValidator memberValidator = new MemberValidator(memberDao);
+    commandMap.put("/project/add", new ProjectAddHandler(projectService, memberValidator));
+    commandMap.put("/project/list", new ProjectListHandler(projectService));
+    commandMap.put("/project/detail", new ProjectDetailHandler(projectService));
+    commandMap.put("/project/update", new ProjectUpdateHandler(projectService, memberValidator));
+    commandMap.put("/project/delete", new ProjectDeleteHandler(projectService));
+    commandMap.put("/project/search", new ProjectSearchHandler(projectService));
+    commandMap.put("/project/detailSearch", new ProjectDetailSearchHandler(projectService));
+    commandMap.put("/project/memberUpdate", new ProjectMemberUpdateHandler(projectService, memberValidator));
+    commandMap.put("/project/memberDelete", new ProjectMemberDeleteHandler(projectService));
 
-    commandMap.put("/project/add", new ProjectAddHandler(projectDao, memberValidator));
-    commandMap.put("/project/list", new ProjectListHandler(projectDao));
-    commandMap.put("/project/detail", new ProjectDetailHandler(projectDao));
-    commandMap.put("/project/update", new ProjectUpdateHandler(projectDao, memberValidator));
-    commandMap.put("/project/delete", new ProjectDeleteHandler(projectDao));
-
-    commandMap.put("/task/add", new TaskAddHandler(taskDao, projectDao, memberValidator));
-    commandMap.put("/task/list", new TaskListHandler(taskDao));
-    commandMap.put("/task/detail", new TaskDetailHandler(taskDao));
-    commandMap.put("/task/update", new TaskUpdateHandler(taskDao, projectDao, memberValidator));
-    commandMap.put("/task/delete", new TaskDeleteHandler(taskDao));
+    commandMap.put("/task/add", new TaskAddHandler(taskService, projectService, memberValidator));
+    commandMap.put("/task/list", new TaskListHandler(taskService));
+    commandMap.put("/task/detail", new TaskDetailHandler(taskService));
+    commandMap.put("/task/update", new TaskUpdateHandler(taskService, projectService, memberValidator));
+    commandMap.put("/task/delete", new TaskDeleteHandler(taskService));
 
     // 서버와 연결한다
     try {
@@ -154,7 +181,7 @@ public class ClientApp {
       System.out.println("서버와 통신 하는 중에 오류 발생!");
     }
 
-    con.close();
+    sqlSession.close();
     Prompt.close();
   }
 

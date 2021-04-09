@@ -1,18 +1,18 @@
 package com.eomcs.pms.handler;
 
 import java.util.List;
-import com.eomcs.pms.dao.ProjectDao;
 import com.eomcs.pms.domain.Member;
 import com.eomcs.pms.domain.Project;
+import com.eomcs.pms.service.ProjectService;
 import com.eomcs.util.Prompt;
 
 public class ProjectUpdateHandler implements Command {
 
-  ProjectDao projectDao;
+  ProjectService projectService;
   MemberValidator memberValidatorHandler;
 
-  public ProjectUpdateHandler(ProjectDao projectDao, MemberValidator memberValidatorHandler) {
-    this.projectDao = projectDao;
+  public ProjectUpdateHandler(ProjectService projectService, MemberValidator memberValidatorHandler) {
+    this.projectService = projectService;
     this.memberValidatorHandler = memberValidatorHandler;
   }
 
@@ -22,21 +22,24 @@ public class ProjectUpdateHandler implements Command {
 
     int no = Prompt.inputInt("번호? ");
 
-    Project project = projectDao.findByNo(no);
+    Project oldProject = projectService.get(no);
 
-    if (project == null) {
+    if (oldProject == null) {
       System.out.println("해당 번호의 프로젝트가 없습니다.");
       return;
     }
 
     // 사용자에게서 변경할 데이터를 입력 받는다.
-    project.setTitle(Prompt.inputString(String.format("프로젝트명(%s)? ", project.getTitle())));
-    project.setContent(Prompt.inputString(String.format("내용(%s)? ", project.getContent())));
-    project.setStartDate(Prompt.inputDate(String.format("시작일(%s)? ", project.getStartDate())));
-    project.setEndDate(Prompt.inputDate(String.format("종료일(%s)? ", project.getEndDate())));
+    Project project = new Project();
+    project.setNo(no);
+
+    project.setTitle(Prompt.inputString(String.format("프로젝트명(%s)? ", oldProject.getTitle())));
+    project.setContent(Prompt.inputString(String.format("내용(%s)? ", oldProject.getContent())));
+    project.setStartDate(Prompt.inputDate(String.format("시작일(%s)? ", oldProject.getStartDate())));
+    project.setEndDate(Prompt.inputDate(String.format("종료일(%s)? ", oldProject.getEndDate())));
 
     project.setOwner(memberValidatorHandler.inputMember(
-        String.format("만든이(%s)?(취소: 빈 문자열)", project.getOwner().getName())));
+        String.format("만든이(%s)?(취소: 빈 문자열)", oldProject.getOwner().getName())));
 
     if (project.getOwner() == null) {
       System.out.println("프로젝트 변경을 취소합니다.");
@@ -45,7 +48,6 @@ public class ProjectUpdateHandler implements Command {
 
     // 프로젝트 팀원 정보를 받아낸다.
     StringBuilder strings = new StringBuilder();
-
     List<Member> members = project.getMembers();
     for (Member m : members) {
       if (strings.length() > 0) {
@@ -65,7 +67,7 @@ public class ProjectUpdateHandler implements Command {
     }
 
     // DBMS에게 게시글 변경을 요청한다.
-    projectDao.update(project);
+    projectService.update(project);
 
     System.out.println("프로젝트 정보를 변경하였습니다.");
   }

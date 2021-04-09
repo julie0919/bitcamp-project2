@@ -16,4 +16,6 @@ public interface TaskDao {
   int update(Task task) throws Exception;
 
   int delete(int taskNo) throws Exception;
+
+  int deleteByProjectNo(int projectNo) throws Exception;
 }

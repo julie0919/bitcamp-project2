@@ -1,14 +1,14 @@
 package com.eomcs.pms.handler;
 
-import com.eomcs.pms.dao.ProjectDao;
+import com.eomcs.pms.service.ProjectService;
 import com.eomcs.util.Prompt;
 
 public class ProjectDeleteHandler implements Command {
 
-  ProjectDao projectDao;
+  ProjectService projectService;
 
-  public ProjectDeleteHandler(ProjectDao projectDao) {
-    this.projectDao = projectDao;
+  public ProjectDeleteHandler(ProjectService projectService) {
+    this.projectService = projectService;
   }
 
   @Override
@@ -23,7 +23,7 @@ public class ProjectDeleteHandler implements Command {
       return;
     }
 
-    if(projectDao.delete(no) == 0) {
+    if(projectService.delete(no)== 0) {
       System.out.println("해당 번호의 프로젝트가 없습니다.");
     } else {
       System.out.println("프로젝트를 삭제하였습니다.");

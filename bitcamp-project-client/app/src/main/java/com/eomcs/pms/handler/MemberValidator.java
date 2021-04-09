@@ -2,16 +2,16 @@ package com.eomcs.pms.handler;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.eomcs.pms.dao.MemberDao;
 import com.eomcs.pms.domain.Member;
+import com.eomcs.pms.service.MemberService;
 import com.eomcs.util.Prompt;
 
 public class MemberValidator {
 
-  MemberDao memberDao;
+  MemberService memberService;
 
-  public MemberValidator (MemberDao memberDao) {
-    this.memberDao = memberDao;
+  public MemberValidator (MemberService memberService) {
+    this.memberService = memberService;
   }
 
   public Member inputMember(String promptTitle) throws Exception {
@@ -21,7 +21,7 @@ public class MemberValidator {
         return null;
       } 
 
-      Member m = memberDao.findByName(name);
+      Member m = memberService.search(name);
 
       if(m != null) {
         return m;

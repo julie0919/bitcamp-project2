@@ -1,16 +1,16 @@
 package com.eomcs.pms.handler;
 
-import com.eomcs.pms.dao.ProjectDao;
 import com.eomcs.pms.domain.Project;
+import com.eomcs.pms.service.ProjectService;
 import com.eomcs.util.Prompt;
 
 public class ProjectAddHandler implements Command {
 
-  ProjectDao projectDao;
+  ProjectService projectService;
   MemberValidator memberValidatorHandler;
 
-  public ProjectAddHandler(ProjectDao projectDao, MemberValidator memberValidatorHandler) {
-    this.projectDao = projectDao;
+  public ProjectAddHandler(ProjectService projectService, MemberValidator memberValidatorHandler) {
+    this.projectService = projectService;
     this.memberValidatorHandler = memberValidatorHandler;
   }
 
@@ -33,7 +33,7 @@ public class ProjectAddHandler implements Command {
 
     p.setMembers(memberValidatorHandler.inputMembers("팀원?(완료: 빈 문자열) "));
 
-    projectDao.insert(p);
+    projectService.add(p);
 
     System.out.println("프로젝트를 등록하였습니다.");
   }
