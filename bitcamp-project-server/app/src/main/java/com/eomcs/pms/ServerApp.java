@@ -36,6 +36,9 @@ public class ServerApp {
       while (true) {
         Socket socket = serverSocket.accept();
 
+        if (isStop) {
+          break; // 즉시 반복문을 탈출하여 main 스레드의 연결을 끊는다.
+        }
         // 예전 방식: 직접 스레드를 만들어 작업을 실행시킴
         // new Thread (() -> processRequest(socket)).start();
 
@@ -47,6 +50,7 @@ public class ServerApp {
       System.out.println("서버 실행 중 오류 발생");
       e.printStackTrace();
     }
+    System.out.println("서버 종료!");
   }
 
   private void processRequest(Socket socket) {
@@ -107,7 +111,15 @@ public class ServerApp {
 
   // 서버를 최종적으로 종료하는 역할을 한다.
   private void terminate() {
-    // 
+    // 서버 상태를 종료로 설정한다.
+    isStop = true;
+
+    // 그리고 서버가 즉시 종료할 수 있도록 임의의 접속을 수행한다.
+    // => 스스로 클라이어느가 되어 ServerSocket 에 접속하면
+    //    accept() 에서 리턴하기 때문에 isStop 변수의 상태에 따라 반복문을 멈출 것이다.
+    try(Socket socket = new Socket("localhost", 8888)) {  
+      // 서버를 종료시키기 위해 임의로 접속
+    } catch (Exception e) {}
 
   }
 }
