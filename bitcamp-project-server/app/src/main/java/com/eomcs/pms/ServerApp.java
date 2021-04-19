@@ -16,7 +16,7 @@ public class ServerApp {
   boolean isStop;
 
   public static void main(String[] args) {
-    ServerApp app = new ServerApp(8888);
+    ServerApp app = new ServerApp(8888);     
     app.service();
   }
 
@@ -36,7 +36,7 @@ public class ServerApp {
       while (true) {
         Socket socket = serverSocket.accept();
 
-        if (isStop) {
+        if (isStop) { // 서버의 상태가 종료이면,
           break; // 즉시 반복문을 탈출하여 main 스레드의 연결을 끊는다.
         }
         // 예전 방식: 직접 스레드를 만들어 작업을 실행시킴
@@ -50,6 +50,11 @@ public class ServerApp {
       System.out.println("서버 실행 중 오류 발생");
       e.printStackTrace();
     }
+
+    // 스레드 풀의 모든 스레드를 종료시킨다.
+    // => 단 현재 접속중인 스레드에 대해서는 작업을 완료할 때까지 기다린다.
+    threadPool.shutdown();
+
     System.out.println("서버 종료!");
   }
 
@@ -66,10 +71,11 @@ public class ServerApp {
 
         if (requestLine.equalsIgnoreCase("serverStop")) {
           in.readLine(); // 요청의 끝을 의미하는 빈 줄을 읽는다.
-          out.println("Goodbye!");
+          out.println("Server stopped!");
           out.println();
           out.flush();
           terminate();
+          return;
         }
 
 
@@ -78,7 +84,7 @@ public class ServerApp {
           out.println("Goodbye!");
           out.println();
           out.flush();
-          break;
+          return;
         }
 
         // 클라이언트가 보낸 명령을 서버 창에 출력한다.
