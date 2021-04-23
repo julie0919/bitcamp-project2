@@ -16,7 +16,7 @@ public class BoardAddHandler implements Command {
   BoardService boardService;
 
   // Service 객체는 이 클래스가 작업하는데 필수 객체이기 때문에
-  // 생성자를 통해 반드시 주입 받도록 한다.
+  // 생성자를 통해 반드시 주입 받도록 한다
   public BoardAddHandler(BoardService boardService) {
     this.boardService = boardService;
   }
@@ -28,18 +28,13 @@ public class BoardAddHandler implements Command {
 
     out.println("[게시글 등록]");
 
-    Member loginUser = (Member) request.getSession().getAttribute("loginUser");
-    if (loginUser == null) {
-      out.println("로그인 하지 않았습니다!");
-      return;
-    }
-
     Board b = new Board();
 
     b.setTitle(prompt.inputString("제목? "));
     b.setContent(prompt.inputString("내용? "));
 
     // 작성자는 로그인 사용자이다.
+    Member loginUser = (Member) request.getSession().getAttribute("loginUser");
     b.setWriter(loginUser);
 
     boardService.add(b);

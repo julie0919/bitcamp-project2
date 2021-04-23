@@ -28,11 +28,6 @@ public class ProjectAddHandler implements Command {
     out.println("[프로젝트 등록]");
 
     Member loginUser = (Member) request.getSession().getAttribute("loginUser");
-    if (loginUser == null) {
-      out.println("로그인 하지 않았습니다!");
-      return;
-    }
-
     Project p = new Project();
     p.setTitle(prompt.inputString("프로젝트명? "));
     p.setContent(prompt.inputString("내용? "));
