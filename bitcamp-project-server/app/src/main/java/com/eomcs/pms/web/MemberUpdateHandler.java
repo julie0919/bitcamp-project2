@@ -12,15 +12,8 @@ import com.eomcs.pms.domain.Member;
 import com.eomcs.pms.service.MemberService;
 
 @SuppressWarnings("serial")
-@WebServlet("/login")
-public class LoginHandler extends HttpServlet {
-
-  // Servlet 인터페이스의 오리지널 메서드를 재정의하는 대신에
-  // HttpServlet 클래스에서 추가한 service() 메서드를 재정의한다.
-  // => 톰캣서버
-  //    호출 ----> service(ServletRequest, ServletResponse)
-  //                호출 ----> service(HttpServletRequest, HttpServletResponse)
-
+@WebServlet("/member/update")
+public class MemberUpdateHandler extends HttpServlet {
 
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -31,24 +24,29 @@ public class LoginHandler extends HttpServlet {
     response.setContentType("text/plain;charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    out.println("[로그인]");
-
-    String email = request.getParameter("email");
-    String password = request.getParameter("password");
+    out.println("[회원 변경]");
 
     try {
-      Member member = memberService.get(email, password);
-      if (member == null) {
-        out.println("사용자 정보가 맞지 않습니다.");
-        // 로그인 실패한다면 세션 객체의 모든 내용을 삭제한다.
-        request.getSession().invalidate(); // 
+      int no = Integer.parseInt(request.getParameter("no"));
+
+      Member oldMember = memberService.get(no);
+
+      if (oldMember == null) {
+        out.println("해당 번호의 회원이 없습니다.");
         return;
       }
 
-      // 로그인 성공한다면, 로그인 사용자 정보를 세션 객체에 보관한다.
-      request.getSession().setAttribute("loginUser", member);
+      Member member = new Member();
+      member.setNo(oldMember.getNo());
+      member.setName(request.getParameter("name"));
+      member.setEmail(request.getParameter("email"));
+      member.setPassword(request.getParameter("password"));
+      member.setPhoto(request.getParameter("photo"));
+      member.setTel(request.getParameter("tel"));
 
-      out.printf("%s 님 환영합니다.\n", member.getName());
+      memberService.update(member);
+
+      out.println("회원을 변경하였습니다.");
 
     } catch (Exception e) {
       // 상세 오류 내용을 StringWriter로 출력한다.
@@ -61,6 +59,7 @@ public class LoginHandler extends HttpServlet {
     }
   }
 }
+
 
 
 
