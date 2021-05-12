@@ -55,19 +55,17 @@ public class ProjectDetailSearchHandler extends HttpServlet {
             p.getEndDate(),
             p.getOwner().getName(),
             strBuilder.toString());
-
       }
+
     } catch (Exception e) {
-      // 상세 오류 내용을 StringWriter로 출력한다.
       StringWriter strWriter = new StringWriter();
       PrintWriter printWriter = new PrintWriter(strWriter);
       e.printStackTrace(printWriter);
-
-      // StringWriter 에 들어있는 출력내용을 꺼내 클라이언트로 보낸다.
       out.println(strWriter.toString());
     }
   }
 }
+
 
 
 

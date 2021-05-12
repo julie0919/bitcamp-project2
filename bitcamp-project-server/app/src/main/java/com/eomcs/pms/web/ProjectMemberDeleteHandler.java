@@ -43,30 +43,21 @@ public class ProjectMemberDeleteHandler extends HttpServlet {
         return;
       }
 
-      out.printf("프로젝트 명: %s\n", project.getTitle());
-      out.println("멤버:");
-      for (Member m : project.getMembers()) {
-        out.printf("  %s(%d)\n", m.getName(), m.getNo());
-      }
-      out.println("---------------------------");
-
-
       // 프로젝트의 기존 멤버를 모두 삭제한다.
       projectService.deleteMembers(no);
 
       out.println("프로젝트 멤버를 삭제하였습니다.");
 
     } catch (Exception e) {
-      // 상세 오류 내용을 StringWriter로 출력한다.
       StringWriter strWriter = new StringWriter();
       PrintWriter printWriter = new PrintWriter(strWriter);
       e.printStackTrace(printWriter);
-
-      // StringWriter 에 들어있는 출력내용을 꺼내 클라이언트로 보낸다.
       out.println(strWriter.toString());
     }
   }
 }
+
+
 
 
 

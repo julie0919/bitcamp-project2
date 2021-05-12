@@ -29,8 +29,8 @@ public class ProjectSearchHandler extends HttpServlet {
     out.println("[프로젝트 검색]");
 
     try {
-      // "항목(1:프로젝트명, 2:관리자명, 3:팀원, 그 외: 전체)? ");
-      String item = request.getParameter("target");
+      // 항목(1:프로젝트명, 2:관리자명, 3:팀원, 그 외: 전체)
+      String item = request.getParameter("item");
       String keyword = null;
       if (item.equals("1") || 
           item.equals("2") || 
@@ -61,13 +61,11 @@ public class ProjectSearchHandler extends HttpServlet {
             p.getOwner().getName(),
             strBuilder.toString());
       }
+
     } catch (Exception e) {
-      // 상세 오류 내용을 StringWriter로 출력한다.
       StringWriter strWriter = new StringWriter();
       PrintWriter printWriter = new PrintWriter(strWriter);
       e.printStackTrace(printWriter);
-
-      // StringWriter 에 들어있는 출력내용을 꺼내 클라이언트로 보낸다.
       out.println(strWriter.toString());
     }
   }

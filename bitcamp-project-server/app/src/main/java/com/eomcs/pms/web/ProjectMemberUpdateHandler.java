@@ -44,25 +44,14 @@ public class ProjectMemberUpdateHandler extends HttpServlet {
         return;
       }
 
-      out.printf("프로젝트 명: %s\n", project.getTitle());
-      out.println("멤버:");
-      for (Member m : project.getMembers()) {
-        out.printf("  %s(%d)\n", m.getName(), m.getNo());
-      }
-      out.println("---------------------------");
-
-      // 프로젝트 팀원 정보를 입력 받는다.
-      // ...&member=1&member=1&member=23
-      String[] members = request.getParameterValues("member");
+      // ...&member=1&member=18&member=23
+      String[] values = request.getParameterValues("member");
       ArrayList<Member> memberList = new ArrayList<>();
-      for (String value : members) {
+      for (String value : values) {
         Member member = new Member();
         member.setNo(Integer.parseInt(value));
         memberList.add(member);
       }
-
-      project.setMembers(memberList);
-
 
       // 프로젝트의 멤버를 변경한다.
       projectService.updateMembers(no, memberList);
@@ -73,8 +62,6 @@ public class ProjectMemberUpdateHandler extends HttpServlet {
       StringWriter strWriter = new StringWriter();
       PrintWriter printWriter = new PrintWriter(strWriter);
       e.printStackTrace(printWriter);
-
-      // StringWriter 에 들어있는 출력내용을 꺼내 클라이언트로 보낸다.
       out.println(strWriter.toString());
     }
   }

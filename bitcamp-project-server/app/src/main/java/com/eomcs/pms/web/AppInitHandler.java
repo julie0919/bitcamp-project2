@@ -29,13 +29,13 @@ import com.eomcs.pms.service.impl.DefaultProjectService;
 import com.eomcs.pms.service.impl.DefaultTaskService;
 
 @WebServlet(
-    value="/init",  // 클라이언트에서 요청할 때 사용할 명령이다.
-    loadOnStartup = 1   // 톰캣 서버를 실행할 때 이 객체를 생성하라고 지정한다.
+    value="/init",   // 클라인언트에서 요청할 때 사용할 명령이다.
+    loadOnStartup = 1 // 톰캣 서버를 실행할 때 이 객체를 생성하라고 지정한다.
     )
 // loadOnStartup 이 지정되지 않은 경우, 
 // 클라이언트가 실행을 요청할 때 서블릿 객체를 생성한다.
-// 물론 한번 객체를 생성하면 그 생성된 객체를 계속 사용한다.
-// 즉 두개의 객체를 생성하진 않는다.
+// 물론 한 번 객체를 생성하면 그 생성된 객체를 계속 사용한다.
+// 즉 두 개의 객체를 생성하진 않는다.
 public class AppInitHandler implements Servlet {
 
   @Override
@@ -43,10 +43,9 @@ public class AppInitHandler implements Servlet {
     // 서블릿 객체를 생성할 때 톰캣 서버가 호출하는 메서드
     // => 보통 서블릿들이 사용할 의존 객체를 준비하는 등의 일을 한다.
 
-    // 1) Mybatis 관련 객체 준비
     try {
-      InputStream mybatisConfigStream;
-      mybatisConfigStream = Resources.getResourceAsStream(
+      // 1) Mybatis 관련 객체 준비
+      InputStream mybatisConfigStream = Resources.getResourceAsStream(
           "com/eomcs/pms/conf/mybatis-config.xml");
       SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(mybatisConfigStream);
       SqlSessionFactoryProxy sqlSessionFactoryProxy = new SqlSessionFactoryProxy(sqlSessionFactory);
@@ -68,14 +67,15 @@ public class AppInitHandler implements Servlet {
 
       // 4) 서비스 객체를 ServletContext 보관소에 저장한다.
       ServletContext servletContext = config.getServletContext();
+
       servletContext.setAttribute("boardService", boardService);
       servletContext.setAttribute("memberService", memberService);
       servletContext.setAttribute("projectService", projectService);
       servletContext.setAttribute("taskService", taskService);
 
-      System.out.println("의존객체를 모두 준비하였습니다.");
+      System.out.println("의존 객체를 모두 준비하였습니다.");
 
-    } catch (IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
@@ -98,4 +98,5 @@ public class AppInitHandler implements Servlet {
   public void service(ServletRequest request, ServletResponse response)
       throws ServletException, IOException {
   }
+
 }
