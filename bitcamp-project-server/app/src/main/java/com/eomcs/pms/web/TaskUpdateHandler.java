@@ -23,16 +23,7 @@ public class TaskUpdateHandler extends HttpServlet {
 
     TaskService taskService = (TaskService) request.getServletContext().getAttribute("taskService");
 
-    response.setContentType("text/html;charset=UTF-8");
-    PrintWriter out = response.getWriter();
-
-    out.println("<!DOCTYPE html>");
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<title>작업 변경</title>");
-
     try {
-      request.setCharacterEncoding("UTF-8");
       int no = Integer.parseInt(request.getParameter("no"));
 
       Task oldTask = taskService.get(no);
@@ -54,25 +45,27 @@ public class TaskUpdateHandler extends HttpServlet {
 
       taskService.update(task);
 
-      out.println("<meta http-equiv='Refresh' content='1;url=list'>");
-      out.println("</head>");
-      out.println("<body>");
-      out.println("<h1>작업 변경</h1>");
-      out.println("<p>작업을 변경했습니다.</p>");
+      response.sendRedirect("list");
 
     } catch (Exception e) {
       StringWriter strWriter = new StringWriter();
       PrintWriter printWriter = new PrintWriter(strWriter);
       e.printStackTrace(printWriter);
 
+      response.setContentType("text/html;charset=UTF-8");
+      PrintWriter out = response.getWriter();
+
+      out.println("<!DOCTYPE html>");
+      out.println("<html>");
+      out.println("<head>");
+      out.println("<title>작업 변경</title>");
       out.println("</head>");
       out.println("<body>");
       out.println("<h1>작업 변경 오류</h1>");
       out.printf("<pre>%s</pre>\n", strWriter.toString());
       out.println("<p><a href='list'>목록</a></p>");
+      out.println("</body>");
+      out.println("</html>");
     }
-
-    out.println("</body>");
-    out.println("</html>");
   }
 }
