@@ -2,7 +2,6 @@ package com.eomcs.pms.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -105,12 +104,7 @@ public class TaskListHandler extends HttpServlet {
         out.println("</table>");
       }
     } catch (Exception e) {
-      StringWriter strWriter = new StringWriter();
-      PrintWriter printWriter = new PrintWriter(strWriter);
-      e.printStackTrace(printWriter);
-
-      out.printf("<p>%s</p>\n", e.getMessage());
-      out.printf("<pre>%s</pre>\n", strWriter.toString());
+      throw new ServletException(e);
     }
 
     out.println("</body>");
