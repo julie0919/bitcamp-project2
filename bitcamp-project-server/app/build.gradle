@@ -34,6 +34,9 @@ dependencies {
     // => compileOnly : 컴파일한 후 생성되는 빌드 파일에 포함되지 않는다.
     //
     
+    // 웹 애플리케이션을 제작할 때 사용하는 Servlet/JSP 라이브러리
+    implementation 'javax.servlet:jstl:1.2'
+    
     // Thumbnailator 썸네일 생성 라이브러리
     implementation 'net.coobird:thumbnailator:0.4.13'
     
