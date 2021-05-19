@@ -51,6 +51,7 @@ public class MemberAddHandler extends HttpServlet {
 
       Part photoPart = request.getPart("photo");
       if (photoPart.getSize() > 0) {
+
         // 파일을 선택해서 업로드 했다면,
         String filename = UUID.randomUUID().toString();
         photoPart.write(this.uploadDir + "/" + filename);
