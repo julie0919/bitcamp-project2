@@ -2,6 +2,7 @@ package com.eomcs.pms.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -12,11 +13,7 @@ import com.eomcs.pms.domain.Member;
 import com.eomcs.pms.domain.Project;
 import com.eomcs.pms.service.ProjectService;
 
-// 서비스 객체
-// - 비즈니스 로직을 담고 있다.
-// - 업무에 따라 트랜잭션을 제어하는 일을 한다.
-// - 서비스 객체의 메서드는 가능한 업무 관련 용어를 사용하여 메서드를 정의한다.
-//
+@Service
 public class DefaultProjectService implements ProjectService {
 
   TransactionTemplate transactionTemplate;
@@ -24,7 +21,7 @@ public class DefaultProjectService implements ProjectService {
   ProjectDao projectDao;
   TaskDao taskDao;
 
-  public DefaultProjectService(PlatformTransactionManager txManager, ProjectDao projectDao, TaskDao taskDao) {
+  public DefaultProjectService(PlatformTransactionManager  txManager, ProjectDao projectDao, TaskDao taskDao) {
     this.transactionTemplate = new TransactionTemplate(txManager);
     this.projectDao = projectDao;
     this.taskDao = taskDao;
@@ -33,7 +30,7 @@ public class DefaultProjectService implements ProjectService {
   // 등록 업무 
   @Override
   public int add(Project project) throws Exception {
-    return transactionTemplate.execute(new TransactionCallback<Integer>() {
+    return transactionTemplate.execute(new TransactionCallback<Integer>(){
       @Override
       public Integer doInTransaction(TransactionStatus status) {
         try {
@@ -110,7 +107,6 @@ public class DefaultProjectService implements ProjectService {
     return transactionTemplate.execute(new TransactionCallback<Integer>() {
       @Override
       public Integer doInTransaction(TransactionStatus status) {
-
         try {
           // 트랜잭션으로 묶어서 실행할 작업을 기술한다.
           // 1) 프로젝트의 모든 작업 삭제
